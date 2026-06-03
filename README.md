@@ -2,9 +2,9 @@
 
 <div align="center">
   <a href="LICENSE-CODE">
-    <img src="https://img.shields.io/badge/Code-PolyForm%20NC%201.0-blue" alt="Code License"></a>
+    <img src="https://img.shields.io/badge/Code-GPL%20v3-blue" alt="Code License"></a>
   <a href="LICENSE">
-    <img src="https://img.shields.io/badge/Content-CC%20BY--NC--SA%204.0-lightgrey" alt="Content License"></a>
+    <img src="https://img.shields.io/badge/Content-CC%20BY--SA%204.0-lightgrey" alt="Content License"></a>
   <img src="https://img.shields.io/badge/brand-HJPLUS.DESIGN-black" alt="HJPLUS.DESIGN">
   <a href="https://www.youtube.com/watch?v=SVQ4Y1NpnrA">
     <img src="https://img.shields.io/badge/youtube-video-crimson" alt="YouTube Video"></a>
@@ -271,7 +271,7 @@ description: "This skill should be used when [具體觸發情境]。"
 
 此專案採用 **分層授權** 模式：
 
-- **文字內容**（`.md` 文件）：[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-Hant)
-- **腳本程式碼**（`.sh`、`.py`、`.js`、`.ts` 等）：[PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0)
+- **文字內容**（`.md` 文件）：[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant)
+- **腳本程式碼**（`.sh`、`.py`、`.js`、`.ts` 等）：[GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.html)
 
 詳見 [LICENSE](LICENSE) 與 [LICENSE-CODE](LICENSE-CODE) 檔案。

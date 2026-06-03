@@ -2,71 +2,70 @@
 
 本知識庫採用**分層授權**模式：內容（Documentation）與腳本（Code）分別適用不同的授權條款。
 
+---
+
 ## 📄 內容授權（Documentation）
 
 本知識庫的所有**文字內容**（包含所有 `.md` 文件、技術規範、說明文件、domain.md、skill.md 與相關文件）
-採用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-Hant) 授權。
+採用 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant) 授權。
 
 ```
-Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+Creative Commons Attribution-ShareAlike 4.0 International License
 ```
 
 ### 允許：
 - 複製、分佈與傳輸本作品
 - 重混、轉換本作品並建立衍生著作
-- 非商業性使用
-
-### 禁止：
-- 任何商業性使用
-- 移除或變更版權聲明與授權條款
+- 商業性使用
 
 ### 使用者必須：
 - **姓名標示（BY）** — 使用時必須註明來源（作者名稱、授權條款連結與原始作品出處）
-- **相同方式分享（SA）** — 若改作或建立衍生著作，必須以**相同的 CC BY-NC-SA 4.0 授權條款**散布
+- **相同方式分享（SA）** — 若改作或建立衍生著作，必須以**相同的 CC BY-SA 4.0 授權條款**散布
 
 ---
 
 ## 💻 腳本授權（Code）
 
 本知識庫的所有**腳本程式碼**（包含所有 `.sh`、`.py`、`.js`、`.ts`、`.rb`、`.mjs` 等程式碼檔案）
-採用 [PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0) 授權。
+採用 [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) 授權。
+
+```
+GNU General Public License v3.0 or later
+```
 
 ### 允許：
-- 複製、分佈與傳輸本腳本
-- 修改本腳本並建立衍生作品
-- 非商業性使用
-
-### 禁止：
-- 任何商業性使用
+- 複製、分佈與傳輸本程式碼
+- 修改本程式碼並建立衍生作品
+- 商業性使用
 
 ### 使用者必須：
-- **姓名標示** — 分佈時必須包含本授權條款
-- **保留版權聲明** — 維持所有必需的通知（Required Notice）
+- **提供原始碼** — 若以二進位形式散布，必須同時提供可讀的原始碼
+- **相同方式分享** — 衍生作品必須以 GPL v3 授權發布
+- **保留版權聲明** — 必須保留原始版權標示
 
 ---
 
 ## 關鍵區別
 
-| | 內容（.md）| 腳本（.sh/.py/.js）|
+| | 內容（.md） | 腳本（.sh/.py/.js） |
 |--|--|--|
-| 授權條款 | CC BY-NC-SA 4.0 | PolyForm Noncommercial 1.0.0 |
-| 非商業使用 | ✅ 允許 | ✅ 允許 |
-| 修改與分佈 | ✅ 允許 | ✅ 允許 |
-| **相同方式分享** | ✅ 必須 | ❌ 無此限制 |
-| **商業使用** | ❌ 禁止 | ❌ 禁止 |
+| 授權條款 | CC BY-SA 4.0 | GPL v3 |
+| 複製與分佈 | ✅ 允許 | ✅ 允許 |
+| 修改與衍生 | ✅ 允許 | ✅ 允許 |
+| **相同方式分享** | ✅ 必須 | ✅ 必須 |
+| **商業使用** | ✅ 允許 | ✅ 允許 |
 
 ---
 
 ## 授權條款不可撤銷
 
-> 所有以創用 CC 或 PolyForm 授權釋出的內容，其授權均**不可撤銷**。一旦發布，授權條款持續生效至著作權消滅為止。
+> 本專案採用之授權條款（CC BY-SA 4.0 及 GPL v3）均**不可撤銷**。一旦發布，授權條款持續生效至著作權消滅為止。
 
 ---
 
-## 商業授權
+## 貢獻者共識
 
-如需商業用途或特殊授權，請聯繫：
-[contact@hplus.com.tw](mailto:contact@hplus.com.tw)
+本專案歡迎社群參與貢獻。當您提交 Pull Request 時，即視為您同意將貢獻內容以本專案對應的授權條款（CC BY-SA 4.0 或 GPL v3）開放給專案使用與散布。
 
 ---
 
