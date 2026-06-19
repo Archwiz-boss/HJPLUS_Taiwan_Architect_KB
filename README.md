@@ -22,7 +22,10 @@
 
 > 感謝所有貢獻者！此區塊記錄近期已合併的 PR。
 
-- **2026-06-18** 🏛️ 新增文化資產保存法分類（4 個 C 類技能）([#15](https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/pull/15))
+- **2026-06-19** 🧰 新增設計軟體與工具分類（Archicad 4 個技能模組）([#14](https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/pull/14))
+- **2026-06-19** 🪜 新增樓梯欄杆坡道技能（建技規 §33 樓梯寬度）([#11](https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/pull/11))
+- **2026-06-19** 📐 新增容積免計實務陷阱技能 ([#10](https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/pull/10))
+- **2026-06-18** 🏛️ 新增文化資產保存法分類（9 個 C 類技能）([#15](https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/pull/15))
 - **2026-06-17** 🏗️ 新增混凝土結構設計分類（5 個 C 類技能）([#9](https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/pull/9))
 - **2026-06-17** ♿ 新增無障礙出入口門淨寬實務陷阱技能 ([#12](https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/pull/12))
 - **2026-05-17** ✨ 新增公共工程分類（公開招標、公開閱覽） ([#4](https://github.com/h30190/HJPLUS_Taiwan_Architect_KB/pull/4))
@@ -91,7 +94,7 @@
 
 ### 4️⃣ [建築法規](建築法規/) Building Codes & Regulations
 
-**15 個技能模組（15C）**
+**16 個技能模組（16C）**
 
 - **消防安全/**
   - [taiwan-fire-safety](建築法規/消防安全/taiwan-fire-safety/) (C 類台灣法規)
@@ -99,10 +102,9 @@
 - **無障礙設計/**
   - [taiwan-accessibility](建築法規/無障礙設計/taiwan-accessibility/) (C 類台灣法規)
   - [accessible-door-clear-width](建築法規/無障礙設計/無障礙出入口門淨寬實務陷阱/accessible-door-clear-width/) (C 類台灣法規)
-- **施工文件與驗收/**
-  - [taiwan-construction-docs](建築法規/施工文件與驗收/taiwan-construction-docs/) (C 類台灣法規)
 - **容積率與建蔽率計算/**
   - [taiwan-programming](建築法規/容積率與建蔽率計算/taiwan-programming/) (C 類台灣法規)
+  - [floor-area-exemption-pitfalls](建築法規/容積率與建蔽率計算/容積免計實務陷阱/floor-area-exemption-pitfalls/) (C 類台灣法規)
 - **文化資產保存法/**
   - [cultural-heritage-items](建築法規/文化資產保存法/文化資產項目/cultural-heritage-items/) (C 類台灣法規)
   - [heritage-investigation](建築法規/文化資產保存法/調查研究/heritage-investigation/) (C 類台灣法規)
@@ -114,11 +116,13 @@
   - [heritage-restoration-phases](建築法規/文化資產保存法/修復工程程序/heritage-restoration-phases/) (C 類台灣法規)
   - [heritage-incentives-compensation](建築法規/文化資產保存法/文化資產獎勵與補償/heritage-incentives-compensation/) (C 類台灣法規)
 - **建築技術規則/**
-  - [taiwan-stair-railing-ramp](建築法規/建築技術規則/樓梯欄杆坡道/taiwan-stair-railing-ramp/) (C 類台灣法規) — 第七節 樓梯、欄杆、坡道（§33–39）；目前完整收錄 §33 樓梯寬度
+  - [taiwan-stair-railing-ramp](建築法規/建築技術規則/樓梯欄杆坡道/taiwan-stair-railing-ramp/) (C 類台灣法規) — §33 樓梯寬度
+- **建築法規查詢系統/**
+  - 目錄建立完成（尚無技能內容）
 
-**8 個待建立目錄**
+**7 個待建立目錄**
 
-- 建築法/
+- 施工文件與驗收/
 - 都市計畫法/
 - 建築材料與構造/
 - 耐震與結構安全/
@@ -206,11 +210,28 @@
 
 ---
 
+### 🔟 [設計軟體與工具](設計軟體與工具/) Design Software & Tools
+
+> 💡 此分類由 [Archwiz-boss](https://github.com/Archwiz-boss) 貢獻基礎目錄架構與首批技能
+
+**4 個技能模組（4A）**
+
+| 子分類 | 技能 | 類別 |
+|--------|------|------|
+| **BIM 工具/** | [Archicad 基礎工作流程](設計軟體與工具/BIM工具/Archicad/archicad-basic-workflow/) | A 類通用 |
+| | [Archicad 圖面與文件產出](設計軟體與工具/BIM工具/Archicad/archicad-documentation/) | A 類通用 |
+| | [Archicad IFC 協調](設計軟體與工具/BIM工具/Archicad/archicad-ifc-coordination/) | A 類通用 |
+| | [Archicad 樣板設定](設計軟體與工具/BIM工具/Archicad/archicad-template-setup/) | A 類通用 |
+
+**70+ 個軟體目錄入口**（含 AutoCAD、Revit、Rhino、SketchUp、Blender、Unreal Engine 等，歡迎貢獻技能內容）
+
+---
+
 ## 技能分類說明
 
 | 分類 | 數量 | 特徵 | 適用對象 |
 |-----|-|-|-|
-| **A 類通用技能** | 5 個 | 國際通用標準，無需台灣適配 | AI + 人類直接使用 |
+| **A 類通用技能** | 9 個 | 國際通用標準，無需台灣適配 | AI + 人類直接使用 |
 | **B 類適配技能** | 8 個 | 國際規範→台灣適配，保留 TODO 注記 | 國際→台灣雙向支援 |
 | **C 類台灣法規技能** | 22 個 | 完全台灣法規，MCP 工具對接 | 台灣法規本位，官方對接 |
 
