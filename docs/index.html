@@ -624,18 +624,30 @@ setTimeout(() => {
   function render(issues) {
     var html = '';
     issues.forEach(function(issue) {
-      // extract title without [活動] prefix
       var t = issue.title.replace(/^\[活動\]\s*/, '');
-      // parse date from body (first line after 📅)
       var body = issue.body || '';
-      var dateMatch = body.match(/📅[^\n]*\n?\s*([^\n]+)/);
-      var dateStr = dateMatch ? dateMatch[1].trim() : '';
-      var formatMatch = body.match(/📍[^\n]*\n?\s*([^\n]+)/);
-      var formatStr = formatMatch ? formatMatch[1].trim() : '';
-      var linkMatch = body.match(/🔗[^\n]*\n?\s*([^\n]+)/);
-      var link = linkMatch ? linkMatch[1].trim() : issue.html_url;
-      var descMatch = body.match(/📝[^\n]*\n?\s*([^\n]+)/);
-      var desc = descMatch ? descMatch[1].trim() : '';
+
+      // extract field after emoji header (handles both "📅 value" and "### 📅 \n\n value")
+      function getField(emoji) {
+        var lines = body.split('\n');
+        for (var i = 0; i < lines.length; i++) {
+          if (lines[i].indexOf(emoji) === -1) continue;
+          // same line after 「」 or ： or : or blank
+          var m = lines[i].match(new RegExp('[：:）)\\]]\\s*(.+)'));
+          if (m) return m[1].trim();
+          // next non-empty line that isn't another header
+          for (var j = i + 1; j < lines.length && j <= i + 3; j++) {
+            var l = lines[j].trim();
+            if (l && l.indexOf('### ') !== 0) return l;
+          }
+        }
+        return '';
+      }
+
+      var dateStr = getField('📅');
+      var formatStr = getField('📍');
+      var link = getField('🔗') || issue.html_url;
+      var desc = getField('📝');
 
       html += '<div class="event-card">' +
         '<div class="event-info">' +
