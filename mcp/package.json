@@ -12,7 +12,7 @@
     "README.md"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "repository": {
     "type": "git",
@@ -30,10 +30,19 @@
   ],
   "scripts": {
     "start": "node src/index.js",
-    "smoke": "node test/smoke.js"
+    "smoke": "node test/smoke.js",
+    "e2e": "node test/e2e.js",
+    "test:worker": "node test/worker.js",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
-    "zod": "^3.25.76"
+    "@modelcontextprotocol/server": "^2.0.0",
+    "agents": "^0.22.0",
+    "zod": "^4.2.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.0.0",
+    "wrangler": "^4.128.0"
   }
 }
