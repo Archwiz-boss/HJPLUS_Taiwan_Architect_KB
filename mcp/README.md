@@ -5,8 +5,11 @@ MCP server for the [台灣建築師知識庫](https://h30190.github.io/HJPLUS_Ta
 Lets an AI agent search the knowledge base and pull entry text on demand,
 instead of cloning the repo and walking `index.md` four levels deep.
 
-同一份工具有兩種跑法：**本機 stdio**（`npx`）與 **Cloudflare Worker**（貼一個
-URL）。兩者共用 [`src/server.js`](src/server.js)，只有 transport 不同。
+同一份工具有兩種跑法：**本機 stdio** 與 **Cloudflare Worker**。兩者共用
+[`src/server.js`](src/server.js)，只有 transport 不同。
+
+> 目前**尚未發布到 npm、也尚未部署 Worker**，兩者都要先 clone 這個 repo。
+> 見下方安裝章節。
 
 ## 架構
 
@@ -28,20 +31,43 @@ GitHub Pages 是純靜態託管，無法執行 MCP 需要的 JSON-RPC 端點 —
 
 ## 安裝
 
-### 方式一：本機（開發者）
+### 方式一：本機（目前可用）
+
+尚未發布到 npm，所以先 clone 這個 repo，再以絕對路徑指向進入點：
+
+```bash
+git clone https://github.com/h30190/HJPLUS_Taiwan_Architect_KB.git
+cd HJPLUS_Taiwan_Architect_KB/mcp
+npm install --omit=dev
+```
+
+然後在 MCP client 設定：
 
 ```json
 {
   "mcpServers": {
     "tw-architect-kb": {
-      "command": "npx",
-      "args": ["-y", "@hjplus/tw-architect-kb-mcp"]
+      "command": "node",
+      "args": ["/絕對路徑/HJPLUS_Taiwan_Architect_KB/mcp/src/index.js"]
     }
   }
 }
 ```
 
-存檔後重啟 client。不需要 clone repo、不需要 Python、不需要開任何 port。
+Windows 的路徑在 JSON 裡要用雙反斜線，例如
+`"C:\Users\you\HJPLUS_Taiwan_Architect_KB\mcp\src\index.js"`。
+
+`--omit=dev` 會跳過 wrangler 與 agents，只裝執行 stdio 所需的
+`@modelcontextprotocol/server` 與 `zod`（約 15 MB）。
+
+> **發布之後**才能改用免 clone 的寫法。屆時設定會簡化成：
+>
+> ```json
+> { "command": "npx", "args": ["-y", "@hjplus/tw-architect-kb-mcp"] }
+> ```
+>
+> 發布指令是 `npm publish --access public`（scoped 套件預設為 private，
+> 這個旗標必須加）。在那之前，上面的 npx 寫法會得到 404。
 
 ### 方式二：Cloudflare Worker（免安裝）
 
