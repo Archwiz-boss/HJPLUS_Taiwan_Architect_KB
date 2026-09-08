@@ -126,8 +126,31 @@ Durable Object，純 Worker 即可服務（`createMcpHandler`，即已 deprecate
 | `search_kb` | 自然語言檢索，回傳最相關條目與其 `name`。支援中文與法規條號（`§162`、`第33條`），可用 `klass` / `category` / `region` / `verifiedOnly` 篩選 |
 | `get_skill` | 依 `name` 取回 `SKILL.md` 全文，可選 `includeDomain` 一併取回 `domain.md` |
 | `list_domains` | 列出分類結構與各分類的條目數、查證情況 |
+| `check_name_available` | 檢查 `name` 是否已被使用，並列出主題相似的條目 |
+| `get_contribution_template` | 取回 `知識樣板/` 的範本全文與放置規則，依分類建議 `metadata.class` |
 
-典型流程是 `search_kb` 找到條目 → 取其 `name` → `get_skill` 取回全文。
+查詢流程是 `search_kb` 找到條目 → 取其 `name` → `get_skill` 取回全文。
+
+### 貢獻流程
+
+```
+check_name_available("balcony-drainage-slope")   → 確認沒撞名、沒重複主題
+get_contribution_template("建築法規")             → 拿到範本與該分類的 class 建議
+（agent 依範本寫檔）
+python scripts/validate_okf.py                   → 權威驗證，必須 0 errors
+```
+
+範本是**即時從 main 抓取** `知識樣板/` 的真實檔案，與 `get_skill` 同一個機制 ——
+所以範本永遠是最新的，不會有複製品在這裡慢慢過期。
+
+`metadata.class` 的建議值不是寫死的對照表，而是**從該分類現有條目統計得出**。
+權威定義在 `scripts/update_readme_counts.py` 的 `SECTION_CLASS`（Python 常數，
+本 server 無法 import），複製一份到 JS 只會產生第二個真相來源並逐漸分歧，
+所以改用資料推導 —— 這樣永遠與現況同步。
+
+同樣的理由，**本 server 不做 OKF 規範驗證**。規則的權威是
+[`validate_okf.py`](../scripts/validate_okf.py)，貢獻流程本來就要跑它；用 JS
+再實作一份，兩份規則遲早會分歧，到時候「MCP 說通過、CI 說失敗」比沒有驗證更糟。
 
 ### 查證狀態
 

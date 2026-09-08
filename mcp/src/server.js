@@ -23,6 +23,32 @@ const REPO = "https://github.com/h30190/HJPLUS_Taiwan_Architect_KB";
 // this). Building-code answers carry real professional liability, so every
 // result states its verification state rather than letting the model present
 // unverified material as settled.
+const TEMPLATE = {
+  domain: "知識樣板/domain.md",
+  skill: "知識樣板/skill-name-hyphenated/SKILL.md",
+};
+
+// Class defaults live in SECTION_CLASS in scripts/update_readme_counts.py — a
+// Python constant this server cannot import. Copying it into JS would create a
+// second source of truth that silently drifts, so infer the convention from
+// what the category's existing entries actually carry instead. That reading is
+// current by construction.
+function suggestKlass(entries, category) {
+  const tally = {};
+  for (const e of entries) {
+    if (e.category !== category || !e.klass) continue;
+    tally[e.klass] = (tally[e.klass] || 0) + 1;
+  }
+  const ranked = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+  if (!ranked.length) return null;
+  const total = ranked.reduce((n, [, c]) => n + c, 0);
+  return {
+    klass: ranked[0][0],
+    detail: ranked.map(([k, c]) => `${k} ${c} 筆`).join("、"),
+    confident: ranked[0][1] / total >= 0.6,
+  };
+}
+
 function stateNote(entry) {
   if (entry.verified) {
     const by = entry.verifiedBy?.join(", ") || "未具名";
@@ -65,10 +91,15 @@ export function createServer() {
     { name: "tw-architect-kb", version: "0.1.0" },
     {
       instructions: [
-        "台灣建築師知識庫（OKF bundle）的檢索介面。",
+        "台灣建築師知識庫（OKF bundle）的檢索與貢獻介面。",
         "",
-        "用法：先以 search_kb 找到相關條目，取得其 `name`，再用 get_skill 取回全文。",
+        "查詢：先以 search_kb 找到相關條目，取得其 `name`，再用 get_skill 取回全文。",
         "list_domains 可瀏覽分類結構。",
+        "",
+        "貢獻：要新增知識條目時，先用 check_name_available 確認 name 未被使用，",
+        "再用 get_contribution_template 取得符合 OKF 規範的範本 —— 不要自行臆測",
+        "frontmatter 欄位。本 server 不做規範驗證，寫完必須實際執行",
+        "`python scripts/validate_okf.py`。",
         "",
         "重要：本庫多數條目尚未經人工查證。回答涉及法規判斷時，必須向使用者",
         "說明條目的查證狀態，並提醒核對法規原文；不要將未查證內容陳述為定論。",
@@ -204,6 +235,158 @@ export function createServer() {
             `索引來源：${config.indexUrl}`,
           ].join("\n"),
         );
+      } catch (err) {
+        return fail(err);
+      }
+    },
+  );
+
+  server.registerTool(
+    "get_contribution_template",
+    {
+      title: "取得貢獻範本",
+      description:
+        "取回 知識樣板/ 的 domain.md 與 SKILL.md 範本全文（即時抓取 main 最新版），" +
+        "附上目錄放置規則與合併前必須完成的步驟。" +
+        "給 category 時，會依該分類現有條目統計建議 metadata.class。" +
+        "要新增知識條目時應先呼叫這個工具，不要自行臆測 frontmatter 欄位。",
+      inputSchema: {
+        category: z
+          .string()
+          .optional()
+          .describe("預定投稿的分類，如「建築法規」。用 list_domains 可查看有哪些分類"),
+      },
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    async ({ category }) => {
+      try {
+        const { entries } = await getIndex();
+        const parts = ["# 新增知識條目範本"];
+
+        if (category) {
+          const known = new Set(entries.map((e) => e.category));
+          if (!known.has(category)) {
+            parts.push(
+              `⚠️ 分類「${category}」不在現有分類中。若確定要新增分類，需一併建立` +
+                `該層的 index.md；請先用 list_domains 確認。`,
+            );
+          }
+          const hint = suggestKlass(entries, category);
+          if (hint) {
+            parts.push(
+              `## 分類：${category}\n\n` +
+                `- 建議 metadata.class：**${hint.klass}**` +
+                `（該分類現有 ${hint.detail}${hint.confident ? "" : "；分布分散，請自行判斷"}）`,
+            );
+          }
+        }
+
+        parts.push(
+          [
+            "## 目錄結構（nested layout）",
+            "",
+            "```",
+            `raw/${category || "<分類>"}/<中文知識入口>/domain.md`,
+            `raw/${category || "<分類>"}/<中文知識入口>/<english-skill-name>/SKILL.md`,
+            "```",
+            "",
+            "`domain.md` 與 `SKILL.md` 必須成對出現。`<english-skill-name>` 就是",
+            "SKILL.md frontmatter 的 `name`，兩者必須一致（英文小寫連字號）。",
+            "投稿前請用 check_name_available 確認該 name 未被使用。",
+          ].join("\n"),
+        );
+
+        const [domain, skill] = await Promise.all([
+          fetchText(TEMPLATE.domain),
+          fetchText(TEMPLATE.skill),
+        ]);
+        parts.push("---", `## domain.md 範本（${TEMPLATE.domain}）`, domain);
+        parts.push("---", `## SKILL.md 範本（${TEMPLATE.skill}）`, skill);
+
+        parts.push(
+          [
+            "---",
+            "## 寫完之後",
+            "",
+            "1. 同步父層 `index.md` 的 `## Skills` 清單",
+            "2. 於 `raw/log.md` 以 `## YYYY-MM-DD` 標題加一筆 `**Creation**`",
+            "3. 在 repo 根目錄執行 `python scripts/validate_okf.py`，必須 0 errors",
+            "4. 執行 `python scripts/update_readme_counts.py` 更新計數表",
+            "5. 若新條目的 class 與該分類預設不同，需同步",
+            "   `scripts/update_readme_counts.py` 的 `SECTION_CLASS`",
+            "",
+            "步驟 3 的 validate_okf.py 是規範的唯一權威 —— 本工具只提供範本，",
+            "不做驗證，請務必實際執行它。",
+          ].join("\n"),
+        );
+
+        return text(parts.join("\n\n"));
+      } catch (err) {
+        return fail(err);
+      }
+    },
+  );
+
+  server.registerTool(
+    "check_name_available",
+    {
+      title: "檢查 name 是否可用",
+      description:
+        "檢查 SKILL.md frontmatter 的 `name` 是否已被現有條目使用，並列出主題相似的條目。" +
+        "用於投稿前避免撞名或重複貢獻。",
+      inputSchema: {
+        name: z
+          .string()
+          .describe("預定使用的 name，英文小寫連字號，如 balcony-lobby-far-recalculation"),
+      },
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    async ({ name }) => {
+      try {
+        const { entries } = await getIndex();
+        const wanted = String(name).trim().toLowerCase();
+        const lines = [];
+
+        if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(wanted)) {
+          lines.push(
+            `⚠️ \`${wanted}\` 不符合命名慣例（英文小寫、數字，以連字號分隔）。` +
+              `目錄名必須與這個 name 完全一致。`,
+          );
+        }
+
+        const taken = entries.find((e) => e.name?.toLowerCase() === wanted);
+        if (taken) {
+          lines.push(
+            `❌ 已被使用：**${taken.title}**`,
+            `- 分類：${taken.breadcrumb?.join(" / ") || taken.category}`,
+            `- 路徑：${taken.skillPath}`,
+            "",
+            "請改用其他 name；若目的是補充既有條目，應直接修改該檔案而非新增。",
+          );
+        } else {
+          lines.push(`✅ \`${wanted}\` 尚未被使用。`);
+        }
+
+        // Hyphens hold the words apart; the scorer wants them as separate terms.
+        const ranked = search(entries, wanted.replace(/-/g, " ")).filter(
+          (h) => h.entry.name?.toLowerCase() !== wanted,
+        );
+        // Measured on this corpus: a genuinely on-topic hit scores 100+, while
+        // incidental matches sit around 9–18. Listing that tail would tell a
+        // contributor their topic is already covered when it is not, so cut it.
+        // The relative half of the floor keeps a weak-but-best match from being
+        // dropped when nothing scores high.
+        const floor = ranked.length ? Math.max(30, ranked[0].score * 0.3) : 0;
+        const similar = ranked.filter((h) => h.score >= floor).slice(0, 5);
+        if (similar.length) {
+          lines.push("", "### 主題相似的現有條目（確認是否重複）");
+          for (const h of similar) {
+            lines.push(`- **${h.entry.title}**（\`${h.entry.name}\`）— ${h.entry.category}`);
+          }
+          lines.push("", "若其中已有條目涵蓋你要寫的主題，建議改為補充該條目。");
+        }
+
+        return text(lines.join("\n"));
       } catch (err) {
         return fail(err);
       }

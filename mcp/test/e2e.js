@@ -44,7 +44,7 @@ console.log("已連線\n");
 
 const { tools } = await client.listTools();
 console.log("tools:", tools.map((t) => t.name).join(", "), "\n");
-check("三個 tool 都註冊", tools.length === 3);
+check("五個 tool 都註冊", tools.length === 5, tools.map((t) => t.name).join(","));
 
 // 1. list_domains — index reachable and parsed
 const domains = await client.callTool({ name: "list_domains", arguments: {} });
@@ -87,6 +87,50 @@ check("附上查證狀態", /查證狀態/.test(gText));
 // 6. get_skill — unknown name degrades gracefully
 const g404 = await client.callTool({ name: "get_skill", arguments: { name: "no-such-skill" } });
 check("未知 name 給出可行動的訊息", /找不到/.test(g404.content[0].text));
+
+// 7. check_name_available — a taken name must be reported as taken
+const taken = await client.callTool({
+  name: "check_name_available",
+  arguments: { name: "balcony-lobby-far-recalculation" },
+});
+check("撞名被偵測", /已被使用/.test(taken.content[0].text));
+
+// 8. check_name_available — a free name, and no noise in the similar list
+const free = await client.callTool({
+  name: "check_name_available",
+  arguments: { name: "completely-new-topic-xyz" },
+});
+const freeText = free.content[0].text;
+check("未使用的 name 回報可用", /尚未被使用/.test(freeText));
+check("無關的 name 不列相似條目", !/主題相似/.test(freeText));
+
+// 9. check_name_available — naming convention is flagged, not silently accepted
+const bad = await client.callTool({
+  name: "check_name_available",
+  arguments: { name: "Bad_Name" },
+});
+check("命名不合慣例會警告", /不符合命名慣例/.test(bad.content[0].text));
+
+// 10. get_contribution_template — templates come from the repo, live
+const tpl = await client.callTool({
+  name: "get_contribution_template",
+  arguments: { category: "建築法規" },
+});
+const tplText = tpl.content[0].text;
+console.log("── get_contribution_template 建築法規");
+console.log(head(tpl, 5), "\n");
+check("回傳兩份範本", /domain\.md 範本/.test(tplText) && /SKILL\.md 範本/.test(tplText),
+  `${tplText.length} 字元`);
+check("依現有條目建議 class", /建議 metadata\.class/.test(tplText));
+check("指向 validate_okf.py 為權威", /validate_okf\.py/.test(tplText));
+
+// 11. unknown category warns rather than inventing a path
+const unknown = await client.callTool({
+  name: "get_contribution_template",
+  arguments: { category: "不存在的分類" },
+});
+check("未知分類會警告", /不在現有分類中/.test(unknown.content[0].text));
+
 
 await client.close();
 console.log(`\n${failures === 0 ? "全部通過" : `${failures} 項失敗`}`);

@@ -62,7 +62,7 @@ check("根路徑回傳設定說明", landing.status === 200 && /\/mcp/.test(awai
 const list = await rpc("tools/list");
 const names = (list.body.result?.tools || []).map((t) => t.name);
 console.log("tools:", names.join(", "));
-check("三個 tool 都註冊", names.length === 3, names.join(","));
+check("五個 tool 都註冊", names.length === 5, names.join(","));
 
 const domains = await rpc("tools/call", { name: "list_domains", arguments: {} });
 check("list_domains 讀到 Pages 索引", /條目數/.test(domains.body.result?.content?.[0]?.text || ""));
