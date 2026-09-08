@@ -70,7 +70,13 @@ function formatHit(entry, score) {
   if (entry.isPlanned) lines.push(`- ⚠️ 此條目為籌備中，內容尚未撰寫`);
   if (entry.hasTodo) lines.push(`- ⚠️ 標記為待台灣適配（TODO）`);
   lines.push(`- 說明：${entry.description || entry.summary || "—"}`);
-  lines.push(`- 原文：${entry.skillUrl || `${REPO}/blob/main/${entry.skillPath}`}`);
+  // Repo-relative path first: an agent working in a clone should read the file
+  // with its own tools, which can grep and read a line range instead of pulling
+  // the whole entry into context. Entries run to 52k characters at the top end,
+  // so that difference is large. get_skill stays for callers with no clone.
+  lines.push(`- 檔案：\`${entry.skillPath}\``);
+  if (entry.domainPath) lines.push(`- 知識說明：\`${entry.domainPath}\``);
+  lines.push(`- GitHub：${entry.skillUrl || `${REPO}/blob/main/${entry.skillPath}`}`);
   if (score) lines.push(`- 相關度：${score.toFixed(1)}`);
   return lines.join("\n");
 }
@@ -93,8 +99,10 @@ export function createServer() {
       instructions: [
         "台灣建築師知識庫（OKF bundle）的檢索與貢獻介面。",
         "",
-        "查詢：先以 search_kb 找到相關條目，取得其 `name`，再用 get_skill 取回全文。",
-        "list_domains 可瀏覽分類結構。",
+        "查詢：先以 search_kb 找到相關條目。取全文時，若你能存取這個 repo 的本機",
+        "clone，優先用回傳的「檔案」路徑以自己的檔案工具讀取 —— 可先 grep 定位再讀",
+        "需要的行段，比整篇載入省得多（條目最長超過 50000 字元）。沒有 clone 時才用",
+        "get_skill。list_domains 可瀏覽分類結構。",
         "",
         "貢獻：要新增知識條目時，先用 check_name_available 確認 name 未被使用，",
         "再用 get_contribution_template 取得符合 OKF 規範的範本 —— 不要自行臆測",
@@ -112,9 +120,12 @@ export function createServer() {
     {
       title: "檢索知識庫",
       description:
-        "以自然語言檢索台灣建築師知識庫，回傳最相關的條目及其 `name`。" +
+        "以自然語言檢索台灣建築師知識庫，回傳最相關的條目、其 `name` 與 repo 相對路徑。" +
         "支援中文查詢與法規條號（例如「陽臺容積計算」、「§162」、「第33條 樓梯寬度」）。" +
-        "可用 klass / category / region / verifiedOnly 縮小範圍。",
+        "可用 klass / category / region / verifiedOnly 縮小範圍。" +
+        "取全文時：若你在這個 repo 的本機 clone 中工作，優先用回傳的「檔案」路徑" +
+        "以自己的檔案工具讀取 —— 可以先 grep 定位再讀需要的行段，比整篇載入省得多。" +
+        "沒有本機 clone 時才用 get_skill。",
       inputSchema: {
         query: z
           .string()
@@ -143,7 +154,12 @@ export function createServer() {
           );
         }
         const shown = hits.slice(0, limit);
-        const header = `找到 ${hits.length} 筆，顯示前 ${shown.length} 筆：`;
+      const header = [
+        `找到 ${hits.length} 筆，顯示前 ${shown.length} 筆：`,
+        "",
+        "（在本機 clone 中工作時，用下列「檔案」路徑以自己的工具讀取；" +
+          "沒有 clone 時用 get_skill。）",
+      ].join("\n");
         return text(
           [header, ...shown.map((h) => formatHit(h.entry, h.score))].join("\n\n"),
         );
@@ -159,7 +175,10 @@ export function createServer() {
       title: "取回條目全文",
       description:
         "依 `name` 取回條目的 SKILL.md 全文（即時抓取 main 最新版）。" +
-        "可加 includeDomain 一併取回該條目的 domain.md 知識說明。",
+        "可加 includeDomain 一併取回該條目的 domain.md 知識說明。" +
+        "注意這會回傳整篇（中位數約 3500 字元，最長超過 50000）。" +
+        "若你能存取本機 clone，改用 search_kb 回傳的「檔案」路徑自行讀取會精確得多；" +
+        "這個工具是給沒有 clone 的呼叫端用的。",
       inputSchema: {
         name: z.string().describe("條目的 `name`，由 search_kb 取得"),
         includeDomain: z

@@ -60,6 +60,11 @@ const s1 = await client.callTool({
 console.log("── search_kb 「陽臺容積計算」");
 console.log(head(s1, 8), "\n");
 check("中文查詢命中陽臺條目", /陽臺/.test(s1.content[0].text));
+// The repo-relative path is what lets an agent in a clone read the file with
+// its own tools instead of pulling the whole entry through get_skill.
+check("回傳 repo 相對路徑", /檔案：`raw\//.test(s1.content[0].text));
+check("回傳 domain.md 路徑", /知識說明：`raw\//.test(s1.content[0].text));
+check("仍保留 GitHub 連結", /GitHub：https:\/\//.test(s1.content[0].text));
 
 // 3. search_kb — article number
 const s2 = await client.callTool({ name: "search_kb", arguments: { query: "§162", limit: 2 } });

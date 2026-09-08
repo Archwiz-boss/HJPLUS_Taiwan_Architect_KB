@@ -123,13 +123,48 @@ Durable Object，純 Worker 即可服務（`createMcpHandler`，即已 deprecate
 
 | Tool | 用途 |
 | --- | --- |
-| `search_kb` | 自然語言檢索，回傳最相關條目與其 `name`。支援中文與法規條號（`§162`、`第33條`），可用 `klass` / `category` / `region` / `verifiedOnly` 篩選 |
+| `search_kb` | 自然語言檢索，回傳最相關條目、其 `name` 與 repo 相對路徑。支援中文與法規條號（`§162`、`第33條`），可用 `klass` / `category` / `region` / `verifiedOnly` 篩選 |
 | `get_skill` | 依 `name` 取回 `SKILL.md` 全文，可選 `includeDomain` 一併取回 `domain.md` |
 | `list_domains` | 列出分類結構與各分類的條目數、查證情況 |
 | `check_name_available` | 檢查 `name` 是否已被使用，並列出主題相似的條目 |
 | `get_contribution_template` | 取回 `知識樣板/` 的範本全文與放置規則，依分類建議 `metadata.class` |
 
-查詢流程是 `search_kb` 找到條目 → 取其 `name` → `get_skill` 取回全文。
+### 取全文有兩條路
+
+`search_kb` 每筆結果都會給 **repo 相對路徑**與 GitHub 連結：
+
+```
+- 檔案：`raw/建築法規/容積率與建蔽率計算/陽臺梯廳回計容積計算/balcony-lobby-far-recalculation/SKILL.md`
+- 知識說明：`raw/建築法規/容積率與建蔽率計算/陽臺梯廳回計容積計算/domain.md`
+```
+
+**在本機 clone 中工作時，用那個路徑自己讀。** agent 的檔案工具能先 grep 定位再
+只讀需要的行段，而 `get_skill` 只能給整篇 —— 條目中位數 3,492 字元，最長超過
+52,000。實測「梯廳淨深有什麼要求」這個問題：
+
+| 方式 | 載入量 |
+| --- | --- |
+| `get_skill` 取整篇 | 6,962 字元（約 2,785 tokens） |
+| grep 定位後只讀 Legal Basis 一節 | 524 字元（約 210 tokens） |
+
+省 92%，而且 grep 直接命中答案那一行。
+
+`get_skill` 保留給**沒有本機 clone 的呼叫端**（Claude Desktop、Cloudflare Worker
+版），那裡沒有檔案可讀，路徑派不上用場。
+
+### MCP 的價值在「找」，不在「取」
+
+這個分工不是偏好問題。中文沒有空白可切，agent 自己 grep 找不到東西：
+
+```
+grep -rl "陽臺容積" raw/     → 0 個檔案（原文寫的是「陽臺面積」與「容積」）
+grep -rl "陽臺"     raw/     → 16 個檔案
+grep -rl "容積"     raw/     → 46 個檔案
+search_kb("陽臺容積計算")     → 11 筆，top-1 正確（152.4 分）
+```
+
+grep 要嘛全落空，要嘛給一堆檔案讓 agent 自己猜。索引檢索是 MCP 給得起、
+agent 自己做不到的事；取檔案內容則反過來，agent 的工具更精細。
 
 ### 貢獻流程
 
