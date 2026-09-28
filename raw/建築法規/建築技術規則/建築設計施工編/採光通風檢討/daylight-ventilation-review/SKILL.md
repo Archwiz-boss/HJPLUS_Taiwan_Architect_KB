@@ -41,11 +41,6 @@ text by a practicing architect on the same date — see Data Currency.
 **Division of labor with other skills:**
 
 - This skill = **statutory minimums** (pass/fail against the code).
-- [daylighting-design](../../../../../建築性能/光環境設計/daylighting-design/SKILL.md) =
-  design quality (daylight factor, glare, shading). It is B-class and not localized;
-  its "第 43 條 1/6、1/7" block does **not** match the current code — do not quote it.
-- [indoor-environment](../../../../../建築性能/室內環境/indoor-environment/SKILL.md) =
-  IEQ targets (green building / LEED style), not code minimums.
 - [smoke-exhaust-review](../../../../消防安全/排煙窗法規檢討/smoke-exhaust-review/SKILL.md) =
   what happens **after** a room is found to be a windowless room (無窗戶居室) —
   smoke exhaust and other Chapter 4 consequences.
@@ -331,7 +326,6 @@ daylight (§42).
 | Oversized storage | Cloakroom + storage > 1/8 of floor in a dwelling | WARNING — possible disguised 居室 (§1(19)) |
 | H measured ambiguously | H start point or zoning not in §42 table | WARNING — gray zone, see To Verify |
 | Local add-on unchecked | Municipal review rules not consulted | INFO — declare the unchecked track |
-| Quoting daylighting-design | Using "1/6 窗牆比 / 1/7" from that skill as code | ERROR — not current code text |
 
 ---
 
@@ -378,8 +372,8 @@ daylight (§42).
   Treat as gray zone; conservative lean: apply ×0.7 at 2.00 m.
 - [ ] Municipal review standards (e.g., 臺北市、新北市、臺中市 建管審查基準) on
   daylight/ventilation drawing formats and interpretations — unchecked track.
-- [ ] Interaction with green-building rules (Chapter 17) and 綠建築標章 daylight
-  indicators — out of scope here, not checked.
+- [ ] Interaction with Chapter 17 (綠建築) of the same volume — out of scope here,
+  not checked.
 
 ## MCP Tool Examples
 
@@ -394,8 +388,6 @@ taiwan-building-code_search_building_interpretations(query="無窗戶居室 採�
 
 - [smoke-exhaust-review](../../../../消防安全/排煙窗法規檢討/smoke-exhaust-review/SKILL.md) — consequences once a room is 無窗戶居室
 - [height-ratio-front-road-review](../../高度比與面前道路認定/height-ratio-front-road-review/SKILL.md) — road-facing and setback geometry that also feeds §42 "faces a road"
-- [daylighting-design](../../../../../建築性能/光環境設計/daylighting-design/SKILL.md) — design quality beyond the code minimum (not localized)
-- [indoor-environment](../../../../../建築性能/室內環境/indoor-environment/SKILL.md) — IEQ targets beyond the code minimum
 - [regulation-currency-check](../../../../../建築顧問方法論/法規時效性查證/regulation-currency-check/SKILL.md) — re-verify before permit use
 - [boundary-cases-and-escalation](../../../../../建築顧問方法論/邊界案例與函詢時機/boundary-cases-and-escalation/SKILL.md) — format for the To Verify gray zones
 
