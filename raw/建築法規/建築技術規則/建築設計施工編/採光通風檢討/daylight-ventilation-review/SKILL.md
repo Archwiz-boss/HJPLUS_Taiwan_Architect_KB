@@ -4,6 +4,8 @@ name: daylight-ventilation-review
 description: "This skill should be used when reviewing statutory daylighting (採光) and ventilation (通風) compliance under Taiwan's Building Technical Regulations, Design & Construction volume, Chapter 2 Section 8 (Articles 39-1 to 45) and the Building Equipment volume's mechanical-ventilation rules (Articles 100-106): deciding whether a room is a 居室, computing the Article 41 daylight-area ratio (1/5 classrooms, 1/8 dwellings/wards/dormitory bedrooms, openings within 75 cm above floor excluded), applying Article 42 effective-daylight corrections (H/D limits by zoning, road/permanent-open-space exemption, skylight x3, balcony/corridor over 2 m x0.7), checking Article 43 ventilation openings (5% for habitable rooms and toilets/bathrooms, kitchens 1/10 and >= 0.8 m2), sizing Article 44 natural-ventilation ducts, reading the Article 102 mechanical-ventilation rate table, Article 45 opening-to-boundary distances, and the Article 1(35) windowless-room triggers. Trigger words: 採光檢討、通風檢討、採光面積、有效採光、採光補正、居室採光、有效通風面積、浴廁通風、廚房通風、無窗戶居室、機械通風量、自然通風設備、第41條、第42條、第43條、第44條。"
 license: CC-BY-SA-4.0
 compatibility: claude-code,opencode,agent-skills
+verified:
+  - { by: human:Archwiz-boss, at: 2026-09-28T00:00:00Z }
 sources:
   - id: btr-dc
     resource: https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=D0070115
@@ -17,7 +19,7 @@ metadata:
   audience: architects
   region: taiwan
   class: C
-  status: unverified
+  status: verified
   data-currency: "2026-09-28"
 ---
 
@@ -33,8 +35,8 @@ ventilation provisions of the Building Equipment volume (Articles 100-106).
 
 All article text below was transcribed clause-by-clause from 全國法規資料庫 on
 2026-09-28 (Design & Construction volume amended 民國 115-02-23; Equipment volume
-amended 民國 111-12-29).[^btr-dc][^btr-eq] Frontmatter stays `status: unverified`
-until a human architect re-checks the transcription — see Data Currency.
+amended 民國 111-12-29),[^btr-dc][^btr-eq] and re-checked against the official
+text by a practicing architect on the same date — see Data Currency.
 
 **Division of labor with other skills:**
 
@@ -357,7 +359,7 @@ daylight (§42).
 - Source: 建築技術規則建築設計施工編 §1(5)(19)(20)(35), §39-1～§45（修正日期 民國 115-02-23）；
   建築技術規則建築設備編 §100～§106（修正日期 民國 111-12-29）— 全國法規資料庫
 - Transcribed: 2026-09-28 by an AI agent from the official consolidated text;
-  not yet re-checked by a human architect → frontmatter `status: unverified`
+  re-checked by a practicing architect (human:Archwiz-boss) on 2026-09-28
 - Per-article amendment history was **not** confirmed (the history page returned
   identical content for §41-§44 and was discarded)
 - Volatility: MEDIUM — the Design & Construction volume is amended frequently;
